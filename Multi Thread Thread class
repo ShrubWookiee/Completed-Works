@@ -1,0 +1,31 @@
+/*
+ * NAME : Jacob Woloschek            
+ * FILE NAME : thread.h
+ * PROGRAM PURPOSE :
+ *      This program finds the max element of array with size n.
+ *      It does this by creating n(n-1)/2 threads and compares all
+ *      elements to find largest.
+ */
+#include "ThreadClass.h"
+/*
+ * FUNCTION : Thread
+ *      creates a new thread class called maxFind
+ *      and gives it several parameters
+ * PARAMETER USAGE :
+ *      recieves 3 integers and 2 arrays. I and j are used for positions within
+ *      arrays. A and b are the arrays
+ * FUNCTION CALLED :
+ *      
+ */
+class maxFind : public Thread
+{
+    public:
+        maxFind(int i, int j, int a[], int b[], int k);
+    private:
+        void ThreadFunc();
+        int first;
+        int second;
+        int *xArray;
+        int *wArray;
+        int step;
+};
