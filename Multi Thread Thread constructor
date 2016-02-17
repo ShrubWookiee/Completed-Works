@@ -1,0 +1,79 @@
+/*
+ * NAME : Jacob Woloschek   
+ * FILE NAME : thread.cpp
+ * PROGRAM PURPOSE :
+ *      This program finds the max element of array with size n.
+ *      It does this by creating n(n-1)/2 threads and compares all
+ *      elements to find largest.
+ */
+#include <iostream>
+#include <string.h>
+#include <stdio.h>
+#include "thread.h"
+/*
+ * FUNCTION : maxFind
+ *      constructor for maxFind
+ * PARAMETER USAGE :
+ *      recieves 3 integers and 2 arrays. I and j are used for positions within
+ *      arrays. A and b are the arrays
+ * FUNCTION CALLED :
+ *      
+ */
+maxFind::maxFind(int i, int j, int a[], int b[], int k)
+                :first(i), second(j), xArray(a), wArray(b), step(k)
+{
+                    
+}
+/*
+ * FUNCTION : ThreadFunc
+ *      Initializes w array to all 1's, finds the max element of a x array,
+ *      and finds the positions of the max element in x array from w array.
+ * PARAMETER USAGE :
+ *      No extra parameters but deals with parameters passed to maxFind
+ * FUNCTION CALLED :
+ *      
+ */
+void maxFind::ThreadFunc()
+{
+    Thread::ThreadFunc();
+    int n;
+    char buf[100];
+    
+    if(step == 1)
+    {
+        // Initialization step. Fills w array with all 1's
+        wArray[first] = 1;
+    }
+    else if(step == 3)
+    {
+        if(wArray[first] == 1)
+        {
+            // Prints Maximum value and its location
+            n = sprintf(buf, "Maximum               = %d\n", xArray[first]);
+            printf(buf,n);
+            
+            n = sprintf(buf, "Location              = %d\n", first);
+            printf(buf,n);
+            
+        }
+    }
+    else if(step == 2)
+    {
+        if(xArray[first] < xArray[second])
+        {
+            // Comapres elements and adds 0 to smaller element position in w array
+            wArray[first] = 0;
+            n = sprintf(buf, "Thread T(%d,%d) compares x[%d] = %d and x[%d] = %d, and writes 0 into w[%d]\n", first, second, first, xArray[first], second, xArray[second], first);
+            printf(buf,n);
+        }
+        else if(xArray[first] > xArray[second])
+        {
+            // Comapres elements and adds 0 to smaller element position in w array
+            wArray[second] = 0;
+            n = sprintf(buf, "Thread T(%d,%d) compares x[%d] = %d and x[%d] = %d, and writes 0 into w[%d]\n", first, second, first, xArray[first], second, xArray[second], second);
+            printf(buf,n);
+        }
+    }
+    
+    Exit();
+}
