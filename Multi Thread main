@@ -1,0 +1,114 @@
+/*
+ * NAME : Jacob Woloschek            
+ * FILE NAME : thread-main.cpp
+ * PROGRAM PURPOSE :
+ *      This program finds the max element of array with size n.
+ *      It does this by creating n(n-1)/2 threads and compares all
+ *      elements to find largest.
+ */
+#include <iostream>
+#include <string.h>
+#include <stdio.h>
+#include "thread.h"
+/*
+ * FUNCTION : main
+ *      creates threads and passes argument to threads
+ * PARAMETER USAGE :
+ *      Receives command line arguments for array size and elements
+ * FUNCTION CALLED :
+ *      
+ */
+main(int argc, char *argv[])
+{
+    maxFind *initialize, *findMax, *printMax;
+    int n = atoi(argv[1]); // Size of arrat
+    int x[n]; // array that contains user input
+    int w[n]; // array that contains location of max
+    char buf[100];
+    int i; // loop integer
+    int j; // loop integer
+    int s; 
+    
+    s = sprintf(buf, "Number of input values = %d\n", n);
+    printf(buf, s);
+    for(i = 0; i < n; i++)
+    {
+        x[i] = atoi(argv[i+2]); // Takes user input to create x array
+    }
+    s = sprintf(buf, "Input values         x = ");
+    printf(buf, s);
+    
+    for(i = 0; i < n; i++)
+    {
+        s  = sprintf(buf, "%d ",x[i]); // Prints out x array
+        printf(buf,s);
+    }
+    s  = sprintf(buf, "\n");
+    printf(buf,s);
+    
+    for(i = 0; i < n; i++)
+    {
+        // Creates n threads to initialize w array
+        initialize = new maxFind(i, j, x, w, 1);
+        initialize->Begin(); // Runs the threads
+    }
+    for(i = 0; i < n; i++)
+    {
+        // Waits for initialize threads to complete
+        initialize->Join();
+    }
+    
+    s = sprintf(buf, "After initialization w = ");
+    printf(buf, s);
+    for(i = 0; i < n; i++)
+    {
+        s  = sprintf(buf, "%d ",w[i]);
+        printf(buf,s); // Prints w array after it is initialized
+    }
+    s  = sprintf(buf, "\n");
+    printf(buf,s);
+    
+    for(i = 0; i < n; i++)
+    {
+        for( j = i+1; j < n; j++)
+        {
+            // Creates n(n-1)/2 threads to compare elements of array
+            findMax = new maxFind(i, j, x, w, 2);
+            findMax->Begin(); // Runs threads
+        }
+    }
+    for(i = 0; i < n; i++)
+    {
+        for(j = i+1; j < n; j++)
+        {
+            // Waits for findMax threads to complete
+            findMax->Join();
+        }
+    }
+    
+    s  = sprintf(buf, "After Step 2         w = ");
+    printf(buf,s);
+    for(i = 0; i < n; i++)
+    {
+        s  = sprintf(buf, "%d ", w[i]);
+        printf(buf,s); // Prints out w array after max is found
+    }
+    s  = sprintf(buf, "\n");
+    printf(buf,s);
+    
+    for(i = 0; i < n; i++)
+    {
+        // creates n threads to find location of max
+        printMax = new maxFind(i, j, x, w, 3);
+        printMax->Begin(); // Runs threads
+    }
+    for(i = 0; i < n; i++)
+    {
+        // Waits for printMax threads to complete
+        printMax->Join();
+    }
+    
+    
+    Exit(); // Terminates threads
+    return(0);
+}
