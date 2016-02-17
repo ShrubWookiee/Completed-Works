@@ -1,0 +1,139 @@
+#include <stdio.h>
+
+/*
+ * Jacob Woloschek
+ *
+ * This program takes input from the user and outputs an image of 
+ * a disk with a specified amount of rings and a specified core size.
+ *
+ * The program exits if 0 is input for ring size and core size or
+ * if incapatible values are entered for either size.
+ */
+ 
+ int main() {
+ 
+    int rings = 0;
+    int core = 0;
+        
+    /*
+     * Asks for user input and use those values to complete the disk
+     */
+    printf("Enter number of rings: ");
+    scanf("%d", &rings);
+	
+    printf("Enter core size: ");
+    scanf("%d", &core);
+       
+    /*
+     * Repeats process until 0 is entered for rings and core
+     * or non compatible values are input
+     */
+    while(rings >= 1 && core >= 0)
+    {
+        int top = 0;
+        int middle = 0;
+        int bottom = 0;
+        int i = 0;
+     
+	/*
+	 * Prints the top portion of the ring
+	 */
+	while(top < rings)
+	{
+	     int j = 0;
+	     int k = 0;
+	     int l = 0;
+	     
+	     for(;i < (rings - (top + 1)); i++)
+	     {
+		printf(" ");
+	     }
+	     
+	     for(;j < (top + 1); j++)
+	     {
+	        printf("/");
+	     }
+		 
+	     for(;k < core; k++)
+	     {
+	        printf("-");
+	     }
+	    
+	     for(;l < (top + 1); l++)
+	     {
+		printf("\\");
+	     }
+		 
+	printf("\n");
+	i = 0;
+	top++;
+       }
+       
+       /*
+        * This Prints out the center portion of the ring
+        */
+       while(middle < core)
+       {
+	    int j = 0;
+	    int k = 0;
+	    int l = 0;
+	     
+	    for(;j < rings; j++){
+	    printf("|");
+	    }
+	
+	    for(;k < core; k++){
+	    printf(" ");
+	    }
+	
+	    for(;l < rings; l++){
+	    printf("|");
+	    }
+	    
+	printf("\n");
+	middle++;
+       }
+       
+       /*
+        * This prints out the bottom portion of the disk
+        */
+       while(bottom < rings)
+	{
+	     int j = 0;
+	     int k = 0;
+	     int l = 0;
+	     
+	     for(;j < (rings - (bottom)); j++)
+	     {
+		printf("\\");
+	     }
+		 
+	     for(;k < core; k++)
+	     {
+	        printf("-");
+	     }
+	    
+	     for(;l < (rings - (bottom)); l++)
+	     {
+	        printf("/");
+	     }
+		 
+	printf("\n");
+	i = 0;
+	
+	for(;i < (bottom + 1); i++)
+	     {
+		printf(" ");
+	     }
+	
+	bottom++;
+       }
+       
+       printf("Enter number of rings: ");
+      scanf("%d", &rings);
+	
+      printf("Enter core size: ");
+      scanf("%d", &core);
+    }
+return(0);
+ }
