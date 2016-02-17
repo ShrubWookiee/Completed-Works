@@ -1,0 +1,273 @@
+/* NAME : Jacob Woloschek
+ * PROGRAM ASSIGNMENT #1
+ * PROGRAM PURPOSE :
+ *      This program created for separate child processes.
+ *      Each child process carries out a different task.
+ *      First child randomly generates m integers and sorts them with heap sort.
+ *      Second child finds the nth Fibonacci number.
+ *      Third child runs the Buffon's Needle experiment r times.
+ *      Fourth child checks how many points are under a curve s times.
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <math.h>
+#include <time.h>
+
+int Fib(int);
+/* FUNCTION : Main
+ *      This function creates the child processes
+ * PARAMETER USAGE :
+ *      This functions takes 4 integer values from the commande line as arguments
+ * FUNCTION CALLED :
+ *      This function calls the fibonacci function
+ */
+main(int argc, char *argv[])
+{
+    // Variables used throughout the program
+    pid_t pid;
+    time_t t; // Used for generating a random number 
+    int m = atoi(argv[1]);
+    int n = atoi(argv[2]);
+    int r = atoi(argv[3]);
+    int s = atoi(argv[4]);
+    int i, j, k, root, temp, crossed, area = 0, first[m];
+    float d, a, b, buffon, earea, probability;
+    int status = 0;
+    char buf[100];
+    
+    
+    sprintf(buf, "Main process started\n");
+    write(1, buf, strlen(buf));
+    
+    fflush(stdout);
+    sprintf(buf, "Number of random number = %d\n", m);
+    write(1, buf, strlen(buf));
+    
+    fflush(stdout);
+    sprintf(buf, "Fibonacci Input = %d\n", n);
+    write(1, buf, strlen(buf));
+    
+    fflush(stdout);
+    sprintf(buf, "Buffon's Needle Iterations = %d\n", r);
+    write(1, buf, strlen(buf));
+    
+    fflush(stdout);
+    sprintf(buf, "Integration Iterations = %d\n", s);
+    write(1, buf, strlen(buf));
+    
+    fflush(stdout);
+    sprintf(buf, "Heap Sort Process Created\n");
+    write(1, buf, strlen(buf));
+    
+    // This is the heap sort child
+    if(fork() == 0)
+    {
+        sprintf(buf,  "   Heap Sort Process Started\n");
+        write(1, buf, strlen(buf));
+        srand((unsigned) time(&t));
+        sprintf(buf, "   Random Number Generated:\n");
+        write(1, buf, strlen(buf));
+        // Randomly generates m integers and places them into an array
+        fflush(stdout);
+        for(i = 0; i < m; i++)
+        {  
+            first[i] = rand() % 100;
+            sprintf(buf, "%4d", first[i]);
+            write(1, buf, strlen(buf));
+            
+        }
+        fflush(stdout);
+        sprintf(buf, "\n");
+        write(1, buf, strlen(buf));
+        // Creates Max Heap
+        for(i = 1; i < m; i++)
+        {
+            j = i;
+            do
+            {
+                root = (j - 1) / 2;
+                if(first[root] < first[j])
+                {
+                    temp = first[root];
+                    first[root] = first[j];
+                    first[j] = temp;
+                }
+                j = root;
+            }while(j != 0);
+        }
+        // Sorts elements in max heap
+        for(k = m - 1; k >= 0; k--)
+        {
+            temp = first[0];
+            first[0] = first[k];
+            first[k] = temp;
+            root = 0;
+            do
+            {
+                j = (2 * root + 1);
+                if((first[j] < first[j + 1]) && j < k-1)
+                {
+                    j++;   
+                }
+                        
+                if(first[root] < first[j] && j < k)
+                {
+                    temp = first[root];
+                    first[root] = first[j];
+                    first[j] = temp;
+                }
+                root = j;
+            }while(j < k);
+        }
+        
+        sprintf(buf, "   Sorted Sequence:\n");
+        write(1, buf, strlen(buf));
+        fflush(stdout);
+        for(i = 0; i < m; i++)
+        {
+            fflush(stdout);
+            sprintf(buf, "%4d", first[i]);
+            write(1, buf, strlen(buf));
+            
+        }
+        
+        sprintf(buf, "\n");
+        write(1, buf, strlen(buf));
+        sprintf(buf,"   Heap Sort Process Exits\n");
+        write(1, buf, strlen(buf));
+        exit(0);
+    }
+    
+    sprintf(buf, "Fibonacci Process Created\n");
+    write(1, buf, strlen(buf));
+    // Fibonacci child
+    if(fork() == 0)
+    {
+        
+        sprintf(buf, "     Fibonacci Process Started\n");
+        write(1, buf, strlen(buf));
+        sprintf(buf,"      Input Number %d\n", n);
+        write(1, buf, strlen(buf));
+        fflush(stdout);
+        for(i = 1; i < n; i++)
+        {
+            if(i = n)
+            {
+                fflush(stdout);
+                // Calls Fibonacci function
+                sprintf(buf, "      Fibonacci number f(%d) is %d\n", i, Fib(n));
+                write(1, buf, strlen(buf));
+                sprintf(buf, "      Fibonacci Process Exits\n");
+                write(1, buf, strlen(buf));
+                exit(0);
+            }
+        }
+        
+    }
+    
+    sprintf(buf, "Buffon's Needle Process Created\n");
+    write(1, buf, strlen(buf));
+    // Buffon's Needle child
+    if(fork() == 0)
+    {
+        sprintf(buf, "         Buffon's Needle Process Started\n");
+        write(1, buf, strlen(buf));
+        sprintf(buf, "         Input Number %d\n", r);
+        write(1, buf, strlen(buf));
+        srand((unsigned) time(&t));
+        // Calculate needles that have crossed line
+        for(i = 0; i < r; i++)
+        {
+            d = (float)rand() / (float)RAND_MAX;
+            a = (float)rand() / (float)(RAND_MAX) * ((2*3.1415926) - (0 + 1));
+                    
+            buffon = (d + (1*(sin(a))));                    
+            if(buffon < 0 || buffon > 1)
+            {
+                crossed++;
+                
+            }
+        }
+        fflush(stdout);
+        probability = ((float)crossed/r);
+        sprintf(buf, "         Estimated Probability: %7.5f\n", probability);
+        write(1,buf, strlen(buf));
+        sprintf(buf, "         Buffon's Needle Process Exits\n");
+        write(1, buf, strlen(buf));
+        exit(0);
+    }
+    
+    sprintf(buf, "Integration Process Created\n");
+    write(1, buf, strlen(buf));
+    // Area under curve child
+    if(fork() == 0)
+    {
+        sprintf(buf, "            Integration Process Started\n");
+        write(1, buf, strlen(buf));
+        sprintf(buf, "            Input Number %d\n", s);
+        write(1, buf, strlen(buf));
+        srand((unsigned) time(&t));
+        // Calculates points that land underneath the curve
+        for(i = 0; i < s; i++)
+        {
+            b = (float)rand() / (float)RAND_MAX;
+            a = (float)rand() / (float)RAND_MAX * (3.1415926 - (0 + 1));
+            if(b <= sin(a))
+            {
+                
+                area++;  
+            } 
+        }
+        
+        earea = (((float)area/s) * (3.1415926));
+        fflush(stdout);
+        sprintf(buf, "            Total Hit %d\n", area);
+        write(1, buf, strlen(buf));
+        sprintf(buf, "            Estimated area:%9.6f\n", earea);
+        write(1, buf, strlen(buf));
+        sprintf(buf, "            Integration Process Exits\n");
+        write(1, buf, strlen(buf));
+        exit(0);
+    }
+    sprintf(buf, "Main Process Waits\n");
+    write(1, buf, strlen(buf));
+    // Waits for all children processes to finish
+    while(wait(NULL) > 0);
+    
+    
+    sprintf(buf, "Main Process Exits\n");
+    write(1, buf, strlen(buf));
+    return(0);
+    
+}
+/* FUNCTION : Fibonacci
+ *      This function runs the fibonacci sequence n times
+ * PARAMETER USAGE :
+ *      This functions takes one integer parameter which is how many times
+ *      the fibonacci sequence runs
+ * FUNCTION CALLED :
+ *      This function doesn't call any other functions but it is called by
+ *      the second child process which is the fibonacci process
+ */
+int Fib(int n)
+{
+    while(n != 0)
+    {
+        if(n == 0)
+        {
+            return 0;
+        }
+        else if(n == 1)
+        {
+            return 1;
+        }
+        else
+        {
+            return( Fib(n - 1) + Fib(n - 2));
+        }
+    }
+}
